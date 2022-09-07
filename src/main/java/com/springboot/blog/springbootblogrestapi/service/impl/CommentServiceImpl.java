@@ -50,6 +50,7 @@ public class CommentServiceImpl implements CommentService {
         return commentDtoList;
     }
 
+    // Get a comment by its Id and post Id, check if comment belong to Id to throw Exception
     @Override
     public CommentDto getCommentById(long postId, long commentId) {
 
@@ -65,6 +66,7 @@ public class CommentServiceImpl implements CommentService {
         return mapToDto(comment);
     }
 
+    // Get a comment by its Id and post Id, check if comment belong to Id to throw Exception
     @Override
     public CommentDto updateComment(long postId, long commentId, CommentDto commentRequest) {
 
@@ -86,6 +88,19 @@ public class CommentServiceImpl implements CommentService {
         Comment updatedComment = commentRepository.save(comment);
 
         return mapToDto(updatedComment);
+    }
+
+    @Override
+    public void deleteComment(long postId, long commentId) {
+        // Find Post and comment by their ID
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if(!(comment.getPost().getId() == post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to the post");
+        }
+
+        commentRepository.delete(comment);
     }
 
 
