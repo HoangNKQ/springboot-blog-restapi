@@ -9,6 +9,10 @@ import com.springboot.blog.springbootblogrestapi.repository.PostRepository;
 import com.springboot.blog.springbootblogrestapi.service.CommentService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
@@ -18,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
         this.postRepository = postRepository;
     }
 
-
+    // Create comment: 1_Find Post that comment belonged to,  2_Add comment to post
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
 
@@ -34,6 +38,16 @@ public class CommentServiceImpl implements CommentService {
         Comment newComment = commentRepository.save(comment);
         return mapToDto(newComment);
     }
+
+    @Override
+    public List<CommentDto> getCommentByPostId(long postId) {
+        List<Comment> commentList = commentRepository.findByPostId(postId);
+
+        List<CommentDto> commentDtoList = commentList.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
+
+        return commentDtoList;
+    }
+
 
     private CommentDto mapToDto(Comment comment) {
         CommentDto commentDto = new CommentDto();
