@@ -13,8 +13,10 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    //Custom Exception
-    @ExceptionHandler
+    /*
+    Custom Exception
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
         //create new errorDetails Obj for request payload
         ErrorDetails errorDetails =
@@ -24,7 +26,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(BlogAPIException.class)
     public ResponseEntity<ErrorDetails> handleBlogAPIException(BlogAPIException exception, WebRequest webRequest) {
 
         ErrorDetails errorDetails =
@@ -32,6 +34,18 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
+    /*
+    Global Exception
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception, WebRequest webRequest) {
+
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 
 
