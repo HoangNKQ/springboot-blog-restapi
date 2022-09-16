@@ -17,7 +17,7 @@ import java.util.Set;
 public class Post {
     @Id
     @GeneratedValue(
-            strategy = GenerationType.IDENTITY
+            strategy = GenerationType.SEQUENCE
     )
     private long id;
 
