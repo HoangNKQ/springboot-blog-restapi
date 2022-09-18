@@ -3,11 +3,15 @@ package com.springboot.blog.springbootblogrestapi.exception;
 import com.springboot.blog.springbootblogrestapi.payload.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 //Annotation for global exception handler
 @ControllerAdvice
@@ -35,6 +39,21 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+
+    //Validation Exception
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        Map<String, String> errorDetails = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error) ->{
+            String fieldName = ((FieldError)error).getField();
+            String message = error.getDefaultMessage();
+
+            errorDetails.put(fieldName, message);
+        });
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     /*
     Global Exception
      */
@@ -45,9 +64,5 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
-
-
 
 }
